@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>พยากรณ์ฝุ่นละอองในอากาศ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt&display=swap" rel="stylesheet">
+    <link href="/style.css"  rel="stylesheet">
+</head>
+
+<body>
+    <!-- Modal Popup -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div id="modal" class="modal">
+            <div id="popupCircle" class="circlepopup"></div>
+            <h2 id="popupTitle">คุณภาพอากาศ</h2>
+
+            <p id="popupMessage"></p>
+            <button class="close-btn" onclick="closePopup()">ปิด</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>พยากรณ์ค่าฝุ่นละอองในอากาศ</h1>
+        <h3> ตำบลระแหง อำเภอเมือง จังหวัดตาก</h3>
+        <p id="update-time" style="text-align:left; color: #838080;">อัปเดตข้อมูลล่าสุด </p>
+        
+        <div id="dataContainer">
+            <div class="loading">กำลังโหลดข้อมูล...</div>
+        </div>
+    </div>
+
+    
+
+    <div class="container">
+        <h4 style="text-align:center; color: #000000;">เกณฑ์ดัชนีคุณภาพอากาศประเทศไทย (AQI)</h4>
+        <div class="aqi-scale">
+            <div class="scale-box scale-red">> 200</div>
+            <div class="scale-box scale-orange">101 - 200</div>
+            <div class="scale-box scale-yellow">51 - 100</div>
+            <div class="scale-box scale-green">26 - 50</div>
+            <div class="scale-box scale-blue">0 - 25</div>
+        </div>
+        <p style="text-align:right; color: #838080;">ที่มา:กรมควบคุมโรค กระทรวงสาธารณสุข</p>
+        <table>
+            <tr style="background-color: rgb(180, 182, 182);">
+                <th>AQI</th>
+                <th>ความหมาย</th>
+                <th>สีที่ใช้</th>
+                <th>ความหมาย</th>
+            </tr> 
+            <tr>
+                <td>0 - 25</td>
+                <td>คุณภาพอากาศดีมาก</td>
+                <td>ฟ้า</td>
+                <td>เหมาะสำหรับกิจกรรมกลางแจ้งและการท่องเที่ยว</td>
+            </tr>
+            <tr>
+                <td>26 - 50</td>
+                <td>คุณภาพอากาศดี</td>
+                <td>เขียว</td>
+                <td>สามารถทำกิจกรรมกลางแจ้งได้ตามปกติ</td>
+            </tr>
+            <tr>
+                <td>51 - 100</td>
+                <td>คุณภาพอากาศปานกลาง</td>
+                <td>เหลือง</td>
+                <td>ประชาชนทั่วไป:สามารถทำกิจกรรมกลางแจ้งได้ ผู้ที่ต้องดูแลสุขภาพเป็นพิเศษ:หากมีอาการเบื้องต้น เช่น ไอ หายใจลำบาก ควรลดระยะเวลาทำกิจกรรมกลางแจ้ง</td>
+            </tr>
+            <tr>
+                <td>101 - 200</td>
+                <td>เริ่มมีผลกระทบต่อสุขภาพ</td>
+                <td>ส้ม</td>
+                <td>ประชาชนทั่วไป : ควรเฝ้าระวังสุขภาพ ถ้ามีอาการเบื้องต้น เช่นไอ หายใจลำบาก ระคายเคืองตา ควรลดระยะเวลาการทำกิจกรรมกลางแจ้ง หรือใช้อุปกรณ์ป้องกันตนเองหากมีความจำเป็น
+ ผู้ที่ต้องดูแลสุขภาพเป็นพิเศษ : ควรลดระยะเวลาการทำกิจกรรมกลางแจ้ง หรือใช้อุปกรณ์ป้องกันตนเองหากมีความจำเป็น ถ้ามีอาการทางสุขภาพ เช่น ไอ หายใจลำบากตาอักเสบ แน่นหน้าอก ปวดศีรษะ หัวใจเต้นไม่เป็นปกติ คลื่นไส้ อ่อนเพลีย ควรปรึกษาแพทย์</td>
+            </tr>
+            <tr>
+                <td>มากกว่า 200</td>
+                <td>มีผลกระทบต่อสุขภาพมาก</td>
+                <td>แดง</td>
+                <td>ทุกคนควรหลีกเลี่ยงกิจกรรมกลางแจ้ง หลีกเลี่ยงพื้นที่ที่มีมลพิษทางอากาศสูง หรือใช้อุปกรณ์ป้องกันตนเองหากมีความจำเป็น หากมีอาการทางสุขภาพควรปรึกษาแพทย์</td>
+            </tr>
+        </table>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="firebase_config.js"></script>
+    <script src="main.js"></script>
+   
+</body>
+</html>
