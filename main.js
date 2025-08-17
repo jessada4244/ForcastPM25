@@ -1,308 +1,301 @@
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        // ฟังก์ชันโหลดและแสดง popup จาก Firebase
-        async function loadAndShowPopup() {
-            try {
-                console.log("กำลังโหลดข้อมูล PM2.5...");
-                
-                // ดึงข้อมูลจาก Firestore
-                const querySnapshot = await db.collection("pm25_cmucc").get();
-                
-                if (!querySnapshot.empty) {
-                    // เอาข้อมูลแรกที่พบ หรือสามารถเพิ่มเงื่อนไขในการเลือกข้อมูลได้
-                    const doc = querySnapshot.docs[0];
-                    const data = doc.data();
-                    
-                    console.log("ข้อมูลที่ได้:", data);
-                    
-                    const pm25Value = parseFloat(data.pm25);
-                    const timestamp = data.timestamp;
-                    
-                    // กำหนดสถานะตามค่า PM2.5
-                    let status, colorClass, introducetext;
-                    if (pm25Value <= 25) {
-                        status = 'ดีมาก';
-                        colorClass = 'blue';
-                        introducetext = 'เหมาะสำหรับกิจกรรมกลางแจ้งและการท่องเที่ยว';
-                    } else if (pm25Value <= 50) {
-                        status = 'ดี';
-                        colorClass = 'green';
-                        introducetext = 'ทำกิจกรรมกลางแจ้งได้ตามปกติ';
-                    } else if (pm25Value <= 100) {
-                        status = 'ปานกลาง';
-                        colorClass = 'yellow';
-                        introducetext = 'ลดระยะเวลาทำกิจกรรมกลางแจ้ง';
-                    } else if (pm25Value <= 200) {
-                        status = 'ไม่ดี';
-                        colorClass = 'orange';
-                        introducetext = 'ควรเฝ้าระวังสุขภาพ';
-                    } else {
-                        status = 'แย่มาก';
-                        colorClass = 'red';
-                        introducetext = 'ควรหลีกเลี่ยงกิจกรรมกลางแจ้ง';
-                    }
-                    
-                    // แปลงเวลาเป็นรูปแบบไทย
-                    const formattedTime = formatThaiDateTime(timestamp);
-                    
-                    // อัปเดตข้อความเวลาใน update-time
-                    updateTimeDisplay(formattedTime);
-                    
-                    // สร้างข้อความสำหรับ popup
-                    const message = `${introducetext} `;
-                    
-                    console.log("แสดง popup ค่า PM2.5:", pm25Value);
-                    showPopup(pm25Value, status, colorClass, message);
-                    
-                } else {
-                    console.log("ไม่พบข้อมูล PM2.5");
-                    updateTimeDisplay("ไม่ทราบ");
-                    showPopup(0, 'ไม่ทราบ', 'gray', 'ไม่พบข้อมูลคุณภาพอากาศ');
-                }
-                
-            } catch (error) {
-                console.error("โหลดข้อมูล PM2.5 ล้มเหลว:", error);
-                updateTimeDisplay("เกิดข้อผิดพลาด");
-                showPopup(0, 'ข้อผิดพลาด', 'gray', `เกิดข้อผิดพลาด: ${error.message}`);
-            }
-        }
-
-        // ฟังก์ชันอัปเดตเวลาแสดงผล
-        function updateTimeDisplay(formattedTime) {
-            const updateTimeElement = document.getElementById('update-time');
-            if (updateTimeElement) {
-                updateTimeElement.textContent = `อัปเดตข้อมูลล่าสุด ${formattedTime}`;
-            }
-        }
-
-        // ฟังก์ชันโหลดข้อมูลจาก Firestore อัตโนมัติ (สำหรับแสดงในหน้าหลัก)
-        async function loadData() {
-            const container = document.getElementById('dataContainer');
-            
-            try {
-                // ดึงข้อมูลจาก collection ชื่อ "pm25_cmucc"
-                const querySnapshot = await db.collection("pm25_cmucc").get();
-                
-                if (querySnapshot.empty) {
-                    container.innerHTML = '<div class="loading">ไม่พบข้อมูล</div>';
-                    return;
-                }
-
-                let html = '<div class="data-grid">';
-                let count = 0;
-                let latestTimestamp = null;
-                
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    // แสดงข้อมูล pm25 และ timestamp
-                    if (data.pm25 !== undefined) {
-                        count++;
-                        html += createPMCardHTML(doc.id, data.pm25, data.timestamp);
-                        
-                        // หาข้อมูลล่าสุด
-                        if (!latestTimestamp || (data.timestamp && data.timestamp > latestTimestamp)) {
-                            latestTimestamp = data.timestamp;
-                        }
-                    }
-                });
-                
-                html += '</div>';
-                
-                if (count === 0) {
-                    container.innerHTML = '<div class="loading">ไม่มีข้อมูล</div>';
-                } else {
-                    container.innerHTML = html;
-                    
-                    // อัปเดตเวลาล่าสุดใน update-time
-                    if (latestTimestamp) {
-                        const formattedTime = formatThaiDateTime(latestTimestamp);
-                        updateTimeDisplay(formattedTime);
-                    }
-                }
-                
-            } catch (error) {
-                console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล:", error);
-                container.innerHTML = `
-                    <div class="error">
-                        <strong>❌ เกิดข้อผิดพลาด:</strong><br>
-                        ${error.message}<br><br>
-                        <small>กรุณาตรวจสอบ Firebase Configuration และสิทธิ์การเข้าถึง</small>
-                    </div>
-                `;
-            }
-        }
-
-        // ฟังก์ชันแปลง timestamp เป็นรูปแบบไทย
-        function formatThaiDateTime(timestamp) {
-            const thaiMonths = [
-                'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน',
-                'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม',
-                'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
-            ];
-            
-            let date;
-            
-            // ตรวจสอบว่า timestamp เป็น Firebase Timestamp หรือไม่
-            if (timestamp && timestamp.toDate) {
-                date = timestamp.toDate();
-            } 
-            // หรือเป็น Date object
-            else if (timestamp instanceof Date) {
-                date = timestamp;
-            } 
-            // หรือเป็นตัวเลข (Unix timestamp)
-            else if (typeof timestamp === 'number') {
-                date = new Date(timestamp);
-            }
-            // หรือเป็น string ที่สามารถแปลงเป็น Date ได้
-            else if (typeof timestamp === 'string') {
-                date = new Date(timestamp);
-            }
-            else {
-                return 'ไม่ทราบเวลา';
-            }
-            
-            // ตรวจสอบว่า date ถูกต้องหรือไม่
-            if (isNaN(date.getTime())) {
-                return 'เวลาไม่ถูกต้อง';
-            }
-            
-            const day = date.getDate();
-            const month = thaiMonths[date.getMonth()];
-            const year = date.getFullYear() + 543;
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-
-            return `${day} ${month} ${year} เวลา ${hours}:${minutes} น.`;
-        }
-
-        // ฟังก์ชันแสดง popup 
-        function showPopup(pm25Value, status, colorClass, message) {
-            const modalOverlay = document.getElementById('modalOverlay');
-            const modal = document.getElementById('modal');
-            const popupCircle = document.getElementById('popupCircle');
-            const popupTitle = document.getElementById('popupTitle');
+// ฟังก์ชันโหลดและแสดง popup จาก Firebase
+async function loadAndShowPopup() {
+    try {
+        console.log("กำลังโหลดข้อมูล PM2.5...");
         
-            const popupMessage = document.getElementById('popupMessage');
-
-            // กำหนดสีให้วงกลมใน popup
-            popupCircle.className = `circlepopup ${colorClass}`;
-            popupCircle.innerHTML = `
-                <div>PM 2.5</div>
-                <div style="font-size: 2em; font-weight: bold;">${pm25Value}</div>
-                <div>${status}</div>
-            `;
-
-            // กำหนดข้อความ
-            popupTitle.textContent = 'คุณภาพอากาศวันนี้' ;
+        // ดึงข้อมูลจาก Firestore
+        const querySnapshot = await db.collection("pm25_cmucc").get();
+        
+        if (!querySnapshot.empty) {
+            // เอาข้อมูลแรกที่พบ หรือสามารถเพิ่มเงื่อนไขในการเลือกข้อมูลได้
+            const doc = querySnapshot.docs[0];
+            const data = doc.data();
             
-            popupMessage.innerHTML = message;
+            console.log("ข้อมูลที่ได้:", data);
+            
+            const pm25Value = parseFloat(data.pm25);
+          
+            const timestamp = data.timestamp;
+            
+            // กำหนดสถานะตามค่า PM2.5
+            const result = getPMStatus(pm25Value);
+            
+            // แปลงเวลาเป็นรูปแบบไทย
+            const formattedTime = formatThaiDateTime(timestamp);
+            
+            // อัปเดตข้อความเวลาใน update-time
+            updateTimeDisplay(formattedTime);
+            
+            // สร้างข้อความสำหรับ popup
+            const message = `${result.introducetext} `;
+            
+            console.log("แสดง popup ค่า PM2.5:", pm25Value);
+            showPopup(pm25Value, result.status, result.colorClass, message);
+            
+        } else {
+            console.log("ไม่พบข้อมูล PM2.5");
+            updateTimeDisplay("ไม่ทราบ");
+            showPopup(0, 'ไม่ทราบ', 'gray', 'ไม่พบข้อมูลคุณภาพอากาศ');
+        }
+        
+    } catch (error) {
+        console.error("โหลดข้อมูล PM2.5 ล้มเหลว:", error);
+        updateTimeDisplay("เกิดข้อผิดพลาด");
+        showPopup(0, 'ข้อผิดพลาด', 'gray', `เกิดข้อผิดพลาด: ${error.message}`);
+    }
+}
 
-            // แสดง modal
-            modalOverlay.classList.add('show');
-            modal.classList.remove('closing');
+// ฟังก์ชันกำหนดสถานะตามค่า PM2.5
+function getPMStatus(pmValue) {
+    const pmNum = parseFloat(pmValue);
+    let status, colorClass, introducetext, backgroundColor;
+    
+    if (pmNum <= 25) {
+        status = 'ดีมาก';
+        colorClass = 'blue';
+        backgroundColor = '#4FC3F7';
+        introducetext = 'เหมาะสำหรับกิจกรรมกลางแจ้งและการท่องเที่ยว';
+    } else if (pmNum <= 50) {
+        status = 'ดี';
+        colorClass = 'green';
+        backgroundColor = '#66BB6A';
+        introducetext = 'ทำกิจกรรมกลางแจ้งได้ตามปกติ';
+    } else if (pmNum <= 100) {
+        status = 'ปานกลาง';
+        colorClass = 'yellow';
+        backgroundColor = '#FFCA28';
+        introducetext = 'ลดระยะเวลาทำกิจกรรมกลางแจ้ง';
+    } else if (pmNum <= 200) {
+        status = 'ไม่ดี';
+        colorClass = 'orange';
+        backgroundColor = '#ff8c00';
+        introducetext = 'ควรเฝ้าระวังสุขภาพ';
+    } else {
+        status = 'แย่มาก';
+        colorClass = 'red';
+        backgroundColor = '#EF5350';
+        introducetext = 'ควรหลีกเลี่ยงกิจกรรมกลางแจ้ง';
+    }
+    
+    return { status, colorClass, introducetext, backgroundColor };
+}
+
+// ฟังก์ชันอัปเดตเวลาแสดงผล
+function updateTimeDisplay(formattedTime) {
+    const updateTimeElement = document.getElementById('update-time');
+    if (updateTimeElement) {
+        updateTimeElement.textContent = `อัปเดตข้อมูลล่าสุด ${formattedTime}`;
+    }
+}
+
+// ฟังก์ชันโหลดข้อมูลจาก Firestore อัตโนมัติ (สำหรับแสดงในหน้าหลัก)
+async function loadData() {
+    const container = document.getElementById('dataContainer');
+    
+    try {
+        // ดึงข้อมูลจาก collection ชื่อ "pm25_cmucc"
+        const querySnapshot = await db.collection("pm25_cmucc").get();
+        
+        if (querySnapshot.empty) {
+            container.innerHTML = '<div class="loading">ไม่พบข้อมูล</div>';
+            return;
         }
 
-        // ฟังก์ชันปิด popup
-        function closePopup() {
-            const modalOverlay = document.getElementById('modalOverlay');
-            const modal = document.getElementById('modal');
-            
-            modal.classList.add('closing');
-            setTimeout(() => {
-                modalOverlay.classList.remove('show');
-                modal.classList.remove('closing');
-            }, 300);
-        }
-
-        // ปิด popup เมื่อคลิกพื้นหลัง
-        document.getElementById('modalOverlay').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closePopup();
+        let html = '<div class="data-grid">';
+        let count = 0;
+        let latestTimestamp = null;
+        
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            // แสดงข้อมูล pm25 และ timestamp
+            if (data.pm25 !== undefined) {
+                count++;
+                html += createPMCardHTML(doc.id, data.pm25, data.pm24, data.pm48, data.pm72, data.timestamp);
+                
+                // หาข้อมูลล่าสุด
+                if (!latestTimestamp || (data.timestamp && data.timestamp > latestTimestamp)) {
+                    latestTimestamp = data.timestamp;
+                }
             }
         });
-
-        // ฟังก์ชันสร้าง HTML สำหรับแสดงค่า PM (แก้ไขไม่ให้แสดงเวลาในวงกลม)
-        function createPMCardHTML(docId, pmValue, timestamp) {
-            // กำหนดสีตามระดับ PM2.5
-            let backgroundColor = '';
-            let statusText = '';
-            let pmNum = parseFloat(pmValue);
+        
+        html += '</div>';
+        
+        if (count === 0) {
+            container.innerHTML = '<div class="loading">ไม่มีข้อมูล</div>';
+        } else {
+            container.innerHTML = html;
             
-            if (pmNum <= 25) {
-                backgroundColor = '#4FC3F7'; // ฟ้าอ่อน - คุณภาพดีมาก
-                statusText = 'ดีมาก';
-            } else if (pmNum <= 50) {
-                backgroundColor = '#66BB6A'; // เขียว - คุณภาพดี
-                statusText = 'ดี';
-            } else if (pmNum <= 100) {
-                backgroundColor = '#FFCA28'; // เหลือง - ปานกลาง
-                statusText = 'ปานกลาง';
-            } else if (pmNum <= 200) {
-                backgroundColor = '#ff8c00'; // ส้ม - เริ่มมีผล
-                statusText = 'เริ่มแย่';
-            } else {
-                backgroundColor = '#EF5350'; // แดง - มีผลกระทบ
-                statusText = 'แย่มาก';
+            // อัปเดตเวลาล่าสุดใน update-time
+            if (latestTimestamp) {
+                const formattedTime = formatThaiDateTime(latestTimestamp);
+                updateTimeDisplay(formattedTime);
             }
-            
-            return `
-                <div class="circle" style="background-color: ${backgroundColor};" onclick="showDetailPopup('${pmValue}', '${statusText}')">
-                    <div>PM 2.5</div>
-                    <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pmValue}</div>
-                    <div>${statusText}</div>
-                </div>
-            `;
         }
+        
+    } catch (error) {
+        console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล:", error);
+        container.innerHTML = `
+            <div class="error">
+                <strong>❌ เกิดข้อผิดพลาด:</strong><br>
+                ${error.message}<br><br>
+                <small>กรุณาตรวจสอบ Firebase Configuration และสิทธิ์การเข้าถึง</small>
+            </div>
+        `;
+    }
+}
 
-        // ฟังก์ชันแสดง popup เมื่อคลิกที่วงกลม
-        function showDetailPopup(pmValue, status) {
-            let colorClass, introducetext;
-            let pmNum = parseFloat(pmValue);
-            
-            if (pmNum <= 25) {
-                colorClass = 'blue';
-                introducetext = 'เหมาะสำหรับกิจกรรมกลางแจ้งและการท่องเที่ยว';
-            } else if (pmNum <= 50) {
-                colorClass = 'green';
-                introducetext = 'สามารถทำกิจกรรมกลางแจ้งได้ตามปกติ';
-            } else if (pmNum <= 100) {
-                colorClass = 'yellow';
-                introducetext = 'สามารถทำกิจกรรมกลางแจ้งได้ แต่ควรลดระยะเวลาทำกิจกรรมกลางแจ้ง';
-            } else if (pmNum <= 200) {
-                colorClass = 'orange';
-                introducetext = 'ควรเฝ้าระวังสุขภาพ';
-            } else {
-                colorClass = 'red';
-                introducetext = 'ควรหลีกเลี่ยงกิจกรรมกลางแจ้ง';
-            }
-            
-            showPopup(pmValue, status, colorClass, introducetext);
-        }
+// ฟังก์ชันแปลง timestamp เป็นรูปแบบไทย
+function formatThaiDateTime(timestamp) {
+    const thaiMonths = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน',
+        'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม',
+        'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+    ];
+    
+    let date;
+    
+    // ตรวจสอบว่า timestamp เป็น Firebase Timestamp หรือไม่
+    if (timestamp && timestamp.toDate) {
+        date = timestamp.toDate();
+    } 
+    // หรือเป็น Date object
+    else if (timestamp instanceof Date) {
+        date = timestamp;
+    } 
+    // หรือเป็นตัวเลข (Unix timestamp)
+    else if (typeof timestamp === 'number') {
+        date = new Date(timestamp);
+    }
+    // หรือเป็น string ที่สามารถแปลงเป็น Date ได้
+    else if (typeof timestamp === 'string') {
+        date = new Date(timestamp);
+    }
+    else {
+        return 'ไม่ทราบเวลา';
+    }
+    
+    // ตรวจสอบว่า date ถูกต้องหรือไม่
+    if (isNaN(date.getTime())) {
+        return 'เวลาไม่ถูกต้อง';
+    }
+    
+    const day = date.getDate();
+    const month = thaiMonths[date.getMonth()];
+    const year = date.getFullYear() + 543;
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
 
-        // เมื่อหน้าเว็บโหลดเสร็จ
-        window.onload = function() {
-            // โหลดข้อมูลหลัก
-            loadData();
-            
-            // ตรวจสอบว่ามี Firebase หรือไม่
-            if (typeof firebase !== 'undefined' && firebase.firestore) {
-                // แสดง popup อัตโนมัติเมื่อโหลดหน้าเสร็จ
-                setTimeout(() => {
-                    loadAndShowPopup();
-                }, 1000); // รอ 1 วินาทีหลังจากโหลดข้อมูลเสร็จ
-            } else {
-                console.warn("Firebase ยังไม่ได้เริ่มต้น - แสดงข้อมูลทดสอบ");
-                // แสดง popup ทดสอบ
-                setTimeout(() => {
-                    const testTimestamp = new Date();
-                    const formattedTime = formatThaiDateTime(testTimestamp);
-                    updateTimeDisplay(formattedTime);
-                    const message = `ค่า PM 2.5 อยู่ที่ 201 μg/m³<br>สถานะ: แย่มาก<br><br>📅 อัปเดต: ${formattedTime}`;
-                    showPopup(201, 'แย่มาก', 'red', message);
-                }, 1500);
-            }
-        };
+    return `${day} ${month} ${year} เวลา ${hours}:${minutes} น.`;
+}
 
+// ฟังก์ชันแสดง popup 
+function showPopup(pm25Value, status, colorClass, message) {
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modal = document.getElementById('modal');
+    const popupCircle = document.getElementById('popupCircle');
+    const popupTitle = document.getElementById('popupTitle');
+
+    const popupMessage = document.getElementById('popupMessage');
+
+    // กำหนดสีให้วงกลมใน popup
+    popupCircle.className = `circlepopup ${colorClass}`;
+    popupCircle.innerHTML = `
+        <div>PM 2.5</div>
+        <div style="font-size: 2em; font-weight: bold;">${pm25Value}</div>
+        <div>${status}</div>
+    `;
+
+    // กำหนดข้อความ
+    popupTitle.textContent = 'คุณภาพอากาศวันนี้' ;
+    
+    popupMessage.innerHTML = message;
+
+    // แสดง modal
+    modalOverlay.classList.add('show');
+    modal.classList.remove('closing');
+}
+
+// ฟังก์ชันปิด popup
+function closePopup() {
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modal = document.getElementById('modal');
+    
+    modal.classList.add('closing');
+    setTimeout(() => {
+        modalOverlay.classList.remove('show');
+        modal.classList.remove('closing');
+    }, 300);
+}
+
+// ปิด popup เมื่อคลิกพื้นหลัง
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closePopup();
+    }
+});
+
+// ฟังก์ชันสร้าง HTML สำหรับแสดงค่า PM (แก้ไขให้ตรวจสอบแต่ละค่าแยกกัน)
+function createPMCardHTML(docId, pmValue, pm24, pm48, pm72, timestamp) {
+    // สร้าง HTML สำหรับแต่ละวงกลม โดยตรวจสอบเงื่อนไขแยกกัน
+    const currentPM = getPMStatus(pmValue);
+    const pm24Status = getPMStatus(pm24);
+    const pm48Status = getPMStatus(pm48);
+    const pm72Status = getPMStatus(pm72);
+    
+    return `
+        <div class="circle" style="background-color: ${currentPM.backgroundColor};" onclick="showDetailPopup('${pmValue}', '${currentPM.status}')">
+            <div>ปัจจุบัน</div>
+            <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pmValue}</div>
+            <div>${currentPM.status}</div>
+        </div>
+        <div class="circle" style="background-color: ${pm24Status.backgroundColor};" onclick="showDetailPopup('${pm24}', '${pm24Status.status}')">
+            <div>24 ช.ม.</div>
+            <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pm24}</div>
+            <div>${pm24Status.status}</div>
+        </div>
+        <div class="circle" style="background-color: ${pm48Status.backgroundColor};" onclick="showDetailPopup('${pm48}', '${pm48Status.status}')">
+            <div>48 ช.ม.</div>
+            <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pm48}</div>
+            <div>${pm48Status.status}</div>
+        </div>
+        <div class="circle" style="background-color: ${pm72Status.backgroundColor};" onclick="showDetailPopup('${pm72}', '${pm72Status.status}')">
+            <div>72 ช.ม.</div>
+            <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pm72}</div>
+            <div>${pm72Status.status}</div>
+        </div>
+    `;
+}
+
+// ฟังก์ชันแสดง popup เมื่อคลิกที่วงกลม
+function showDetailPopup(pmValue, status) {
+    const result = getPMStatus(pmValue);
+    showPopup(pmValue, status, result.colorClass, result.introducetext);
+}
+
+// เมื่อหน้าเว็บโหลดเสร็จ
+window.onload = function() {
+    // โหลดข้อมูลหลัก
+    loadData();
+    
+    // ตรวจสอบว่ามี Firebase หรือไม่
+    if (typeof firebase !== 'undefined' && firebase.firestore) {
+        // แสดง popup อัตโนมัติเมื่อโหลดหน้าเสร็จ
+        setTimeout(() => {
+            loadAndShowPopup();
+        }, 1000); // รอ 1 วินาทีหลังจากโหลดข้อมูลเสร็จ
+    } else {
+        console.warn("Firebase ยังไม่ได้เริ่มต้น - แสดงข้อมูลทดสอบ");
+        // แสดง popup ทดสอบ
+        setTimeout(() => {
+            const testTimestamp = new Date();
+            const formattedTime = formatThaiDateTime(testTimestamp);
+            updateTimeDisplay(formattedTime);
+            const message = `ค่า PM 2.5 อยู่ที่ 201 μg/m³<br>สถานะ: แย่มาก<br><br>📅 อัปเดต: ${formattedTime}`;
+            showPopup(201, 'แย่มาก', 'red', message);
+        }, 1500);
+    }
+};
