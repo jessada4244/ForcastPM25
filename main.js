@@ -275,8 +275,9 @@ function createPMCardHTML(docId, pmValue, pm24, pm48, pm72, timestamp) {
     
     return `
         <div>
-         <h4>คุณภาพอากาศวันนี้<br> วันที่ <span id="current-time"></span></h4>
-        <div class="circle" style="background-color: ${currentPM.backgroundColor};" onclick="showDetailPopup('${pmValue}', '${currentPM.status}')">
+         <h4>คุณภาพอากาศวันนี้ </h4>
+         วันที่ <span id="current-time"></span>
+        <div class="circle" style="background-color: ${currentPM.backgroundColor} ;" onclick="showDetailPopup('${pmValue}', '${currentPM.status}')">
             <div>PM 2.5</div>
             <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pmValue}</div>
             <div>${currentPM.status}</div>
