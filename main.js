@@ -57,27 +57,27 @@ function getPMStatus(pmValue) {
         status = 'ดีมาก';
         colorClass = 'blue';
         backgroundColor = '#4FC3F7';
-        introducetext = 'เหมาะสำหรับกิจกรรมกลางแจ้งและการท่องเที่ยว';
+        introducetext = 'คุณภาพอากาศดีมาก เหมาะสำหรับกิจกรรมกลางแจ้ง และการท่องเที่ยว';
     } else if (pmNum <= 50) {
         status = 'ดี';
         colorClass = 'green';
         backgroundColor = '#66BB6A';
-        introducetext = 'ทำกิจกรรมกลางแจ้งได้ตามปกติ';
+        introducetext = 'คุณภาพอากาศดี สามารถทำกิจกรรมกลางแจ้ง และการท่องเที่ยวได้ตามปกติ';
     } else if (pmNum <= 100) {
         status = 'ปานกลาง';
         colorClass = 'yellow';
         backgroundColor = '#FFCA28';
-        introducetext = 'ลดระยะเวลาทำกิจกรรมกลางแจ้ง';
+        introducetext = 'คุณภาพอากาศปานกลาง สามารถทำกิจกรรมกลางแจ้งได้ตามปกติ ';
     } else if (pmNum <= 200) {
         status = 'ไม่ดี';
         colorClass = 'orange';
         backgroundColor = '#ff8c00';
-        introducetext = 'ควรเฝ้าระวังสุขภาพ';
+        introducetext = 'คุณภาพอากาศเริ่มมีผลกระทบต่อสุขภาพ ควรเฝ้าระวังสุขภาพ ควรลดระยะเวลาการทำกิจกรรมกลางแจ้ง';
     } else {
         status = 'แย่มาก';
         colorClass = 'red';
         backgroundColor = '#EF5350';
-        introducetext = 'ควรหลีกเลี่ยงกิจกรรมกลางแจ้ง';
+        introducetext = 'คุณภาพอากาศมีผลกระทบต่อสุขภาพ ควรหลีกเลี่ยงกิจกรรมกลางแจ้ง ';
     }
     
     return { status, colorClass, introducetext, backgroundColor };
@@ -280,9 +280,9 @@ function createPMCardHTML(docId, pmValue, pm24, pm48, pm72, timestamp) {
   <!-- วงกลมวันนี้ (ใหญ่) -->
   <div class="air-today">
         <div>
-         <h4>คุณภาพอากาศวันนี้ </h4>
-         วันที่ <span id="current-time"></span>
-        <div  class="circle" style="background-color: ${currentPM.backgroundColor} ;" onclick="showDetailPopup('${pmValue}', '${currentPM.status}')">
+         <h3>คุณภาพอากาศวันนี้ </h3>
+         <div>วันที่ <span id="current-time"></span></div>
+        <div  class="circle-today" style="background-color: ${currentPM.backgroundColor} ;" onclick="showDetailPopup('${pmValue}', '${currentPM.status}')">
             <div>PM 2.5</div>
             <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pmValue}</div>
             <div>${currentPM.status}</div>
