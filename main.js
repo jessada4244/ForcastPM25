@@ -272,17 +272,22 @@ function createPMCardHTML(docId, pmValue, pm24, pm48, pm72, timestamp) {
     const pm24Status = getPMStatus(pm24);
     const pm48Status = getPMStatus(pm48);
     const pm72Status = getPMStatus(pm72);
+
     
     return `
-        <div>
+   <div class="air-container">
+
+  <!-- วงกลมวันนี้ -->
+  <div class="air-today">
          <h4>คุณภาพอากาศวันนี้ </h4>
          วันที่ <span id="current-time"></span>
-        <div class="circle" style="background-color: ${currentPM.backgroundColor} ;" onclick="showDetailPopup('${pmValue}', '${currentPM.status}')">
+        <div  class="circle" style="background-color: ${currentPM.backgroundColor} ;" onclick="showDetailPopup('${pmValue}', '${currentPM.status}')">
             <div>PM 2.5</div>
             <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pmValue}</div>
             <div>${currentPM.status}</div>
         </div>
         </div>
+      <div class="air-hours">
         <div>
          <p>24 ชั่วโมง</p>
         <div class="circle" style="background-color: ${pm24Status.backgroundColor};" onclick="showDetailPopup('${pm24}', '${pm24Status.status}')">
