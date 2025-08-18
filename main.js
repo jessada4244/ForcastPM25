@@ -191,6 +191,33 @@ function formatThaiDateTime(timestamp) {
 
     return `${day} ${month} ${year} เวลา ${hours}:${minutes} น.`;
 }
+// แสดงเวลา ณ ปัจจุบัน (ตามเครื่องผู้ใช้งาน)
+function showCurrentTime() {
+    const now = new Date();
+
+    const thaiMonths = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน',
+        'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม',
+        'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+    ];
+
+    const day = now.getDate();
+    const month = thaiMonths[now.getMonth()];
+    const year = now.getFullYear() + 543;
+    
+
+    const formatted = `${day} ${month} ${year} `;
+
+    const currentTimeElement = document.getElementById("current-time");
+    if (currentTimeElement) {
+        currentTimeElement.textContent = formatted;
+    }
+}
+
+// อัปเดตเวลา ณ ปัจจุบันทุก 1 วินาที
+setInterval(showCurrentTime, 1000);
+showCurrentTime();
+
 
 // ฟังก์ชันแสดง popup 
 function showPopup(pm25Value, status, colorClass, message) {
@@ -247,25 +274,37 @@ function createPMCardHTML(docId, pmValue, pm24, pm48, pm72, timestamp) {
     const pm72Status = getPMStatus(pm72);
     
     return `
+        <div>
+         <h4>คุณภาพอากาศวันนี้<br> วันที่ <span id="current-time"></span></h4>
         <div class="circle" style="background-color: ${currentPM.backgroundColor};" onclick="showDetailPopup('${pmValue}', '${currentPM.status}')">
-            <div>ปัจจุบัน</div>
+            <div>PM 2.5</div>
             <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pmValue}</div>
             <div>${currentPM.status}</div>
         </div>
+        </div>
+        <div>
+         <p>24 ชั่วโมง</p>
         <div class="circle" style="background-color: ${pm24Status.backgroundColor};" onclick="showDetailPopup('${pm24}', '${pm24Status.status}')">
-            <div>24 ช.ม.</div>
+            <div>PM 2.5</div>
             <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pm24}</div>
             <div>${pm24Status.status}</div>
         </div>
+         </div>
+        <div>
+         <p>48 ชั่วโมง</p>
         <div class="circle" style="background-color: ${pm48Status.backgroundColor};" onclick="showDetailPopup('${pm48}', '${pm48Status.status}')">
-            <div>48 ช.ม.</div>
+            <div>PM 2.5</div>
             <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pm48}</div>
             <div>${pm48Status.status}</div>
         </div>
+         </div>
+        <div>
+         <p>72 ชั่วโมง</p>
         <div class="circle" style="background-color: ${pm72Status.backgroundColor};" onclick="showDetailPopup('${pm72}', '${pm72Status.status}')">
-            <div>72 ช.ม.</div>
+            <div>PM 2.5</div>
             <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pm72}</div>
             <div>${pm72Status.status}</div>
+        </div>
         </div>
     `;
 }

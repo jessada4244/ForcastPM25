@@ -9,6 +9,7 @@
 </head>
 
 <body>
+     
     <!-- Modal Popup -->
     <div id="modalOverlay" class="modal-overlay">
         <div id="modal" class="modal">
@@ -22,24 +23,23 @@
 
     <div class="container">
         <h1>พยากรณ์ค่าฝุ่นละอองในอากาศ</h1>
-        <h3> ตำบลระแหง อำเภอเมือง จังหวัดตาก</h3>
-        <p id="update-time" style="text-align:left; color: #838080;">อัปเดตข้อมูลล่าสุด </p>
-        
+        <h3> ตำบลระแหง อำเภอเมือง จังหวัดตาก</h3>  
+              
         <div id="dataContainer">
             <div class="loading">กำลังโหลดข้อมูล...</div>
         </div>
-    </div>
-
+        <p id="update-time" style="text-align:left; color: #838080;">อัปเดตข้อมูลล่าสุด </p>
     
 
-    <div class="container">
+    
+   
         <h4 style="text-align:center; color: #000000;">เกณฑ์ดัชนีคุณภาพอากาศประเทศไทย (AQI)</h4>
         <div class="aqi-scale">
-            <div class="scale-box scale-red">> 200</div>
-            <div class="scale-box scale-orange">101 - 200</div>
-            <div class="scale-box scale-yellow">51 - 100</div>
-            <div class="scale-box scale-green">26 - 50</div>
-            <div class="scale-box scale-blue">0 - 25</div>
+            <div class="scale-box scale-red">> 200 <br>แย่มาก</div>
+            <div class="scale-box scale-orange">101 - 200<br>เริ่มแย่</div>
+            <div class="scale-box scale-yellow">51 - 100<br>ปานกลาง</div>
+            <div class="scale-box scale-green">26 - 50<br>ดี</div>
+            <div class="scale-box scale-blue">0 - 25<br>ดีมาก</div>
         </div>
         <p style="text-align:right; color: #838080;">ที่มา:กรมควบคุมโรค กระทรวงสาธารณสุข</p>
         <table>
@@ -82,11 +82,10 @@
             </tr>
         </table>
     </div>
-
+</div>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="firebase_config.js"></script>
     <script src="main.js"></script>
-   
 </body>
 </html>
