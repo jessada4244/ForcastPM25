@@ -226,6 +226,7 @@
             margin: 1.5rem 0;
         }
         .scale-box {
+             font-size: 0.8rem; /* ขนาดตัวอักษรเริ่มต้น */
             height: 20px;
             width: 100px;
             margin: 0px;
@@ -486,16 +487,9 @@
         }
         .air-container {
   display: flex;
-  flex-direction: column;  /* วางเรียงในแนวตั้ง */
-  align-items: center;     /* จัดให้อยู่กึ่งกลางแนวนอน */
-  gap: 20px;               /* ระยะห่างระหว่างบล็อก */
-  text-align: center;
-}
-.air-container {
-  display: flex;
   flex-direction: column;  /* เรียงจากบนลงล่าง */
   align-items: center;     /* จัดให้อยู่กึ่งกลางแนวนอน */
-  gap: 20px;
+  gap: 1px;
   text-align: center;
 }
 
@@ -505,13 +499,14 @@
 
 .air-hours {
   display: flex;
+  flex-wrap: wrap;       /* ✅ ให้บรรทัดใหม่เวลาแคบ */
   justify-content: center; /* จัดให้อยู่ตรงกลาง */
-  gap: 150px;               /* ระยะห่างระหว่างวงกลม */
+  gap: 20px;               /* ระยะห่างระหว่างวงกลม */
 }
 
 .circle {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
   display: flex;
   flex-direction: column;
@@ -520,3 +515,5 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   cursor: pointer;
 }
+
+        

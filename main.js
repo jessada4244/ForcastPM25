@@ -275,10 +275,11 @@ function createPMCardHTML(docId, pmValue, pm24, pm48, pm72, timestamp) {
 
     
     return `
-   <div class="air-container">
+    <div class="air-container">
 
-  <!-- วงกลมวันนี้ -->
+  <!-- วงกลมวันนี้ (ใหญ่) -->
   <div class="air-today">
+        <div>
          <h4>คุณภาพอากาศวันนี้ </h4>
          วันที่ <span id="current-time"></span>
         <div  class="circle" style="background-color: ${currentPM.backgroundColor} ;" onclick="showDetailPopup('${pmValue}', '${currentPM.status}')">
@@ -287,7 +288,8 @@ function createPMCardHTML(docId, pmValue, pm24, pm48, pm72, timestamp) {
             <div>${currentPM.status}</div>
         </div>
         </div>
-      <div class="air-hours">
+        <!-- วงกลมชั่วโมง (เล็กกว่าหน่อย) -->
+  <div class="air-hours">
         <div>
          <p>24 ชั่วโมง</p>
         <div class="circle" style="background-color: ${pm24Status.backgroundColor};" onclick="showDetailPopup('${pm24}', '${pm24Status.status}')">
