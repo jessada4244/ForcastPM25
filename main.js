@@ -6,18 +6,20 @@ async function loadAndShowPopup() {
     try {
         console.log("กำลังโหลดข้อมูล PM2.5...");
         
-        // ดึงข้อมูลจาก Firestore
-        const querySnapshot = await db.collection("pm25_cmucc").get();
+        // ดึงข้อมูลจาก Firestore เรียงตาม timestamp จากใหม่ไปเก่า และเอาแค่ 1 document
+        const querySnapshot = await db.collection("pm25_cmucc")
+            .orderBy("timestamp", "desc")
+            .limit(1)
+            .get();
         
         if (!querySnapshot.empty) {
-            // เอาข้อมูลแรกที่พบ หรือสามารถเพิ่มเงื่อนไขในการเลือกข้อมูลได้
+            // เอาข้อมูลล่าสุด
             const doc = querySnapshot.docs[0];
             const data = doc.data();
             
-            console.log("ข้อมูลที่ได้:", data);
+            console.log("ข้อมูลล่าสุดที่ได้:", data);
             
             const pm25Value = parseFloat(data.pm25);
-          
             const timestamp = data.timestamp;
             
             // กำหนดสถานะตามค่า PM2.5
@@ -30,9 +32,9 @@ async function loadAndShowPopup() {
             updateTimeDisplay(formattedTime);
             
             // สร้างข้อความสำหรับ popup
-            const message = `${result.introducetext} `;
+            const message = `${result.introducetext}`;
             
-            console.log("แสดง popup ค่า PM2.5:", pm25Value);
+            console.log("แสดง popup ค่า PM2.5 ล่าสุด:", pm25Value);
             showPopup(pm25Value, result.status, result.colorClass, message);
             
         } else {
@@ -96,55 +98,65 @@ async function loadData() {
     const container = document.getElementById('dataContainer');
     
     try {
-        // ดึงข้อมูลจาก collection ชื่อ "pm25_cmucc"
-        const querySnapshot = await db.collection("pm25_cmucc").get();
+        // ดึงข้อมูลล่าสุดเพียง 1 document เรียงตาม timestamp จากใหม่ไปเก่า
+        const querySnapshot = await db.collection("pm25_cmucc")
+            .orderBy("timestamp", "desc")
+            .limit(1)
+            .get();
         
         if (querySnapshot.empty) {
             container.innerHTML = '<div class="loading">ไม่พบข้อมูล</div>';
             return;
         }
 
-        let html = '<div class="data-grid">';
-        let count = 0;
-        let latestTimestamp = null;
+        // เอาข้อมูลล่าสุดเพียง document เดียว
+        const doc = querySnapshot.docs[0];
+        const data = doc.data();
         
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            // แสดงข้อมูล pm25 และ timestamp
-            if (data.pm25 !== undefined) {
-                count++;
-                html += createPMCardHTML(doc.id, data.pm25, data.pm24, data.pm48, data.pm72, data.timestamp);
-                
-                // หาข้อมูลล่าสุด
-                if (!latestTimestamp || (data.timestamp && data.timestamp > latestTimestamp)) {
-                    latestTimestamp = data.timestamp;
-                }
-            }
-        });
+        console.log("ข้อมูลล่าสุดสำหรับแสดงผล:", data);
         
-        html += '</div>';
-        
-        if (count === 0) {
-            container.innerHTML = '<div class="loading">ไม่มีข้อมูล</div>';
-        } else {
+        // ตรวจสอบว่ามีข้อมูล pm25 หรือไม่
+        if (data.pm25 !== undefined) {
+            const html = `
+                <div class="data-grid">
+                    ${createPMCardHTML(doc.id, data.pm25, data.pm24, data.pm48, data.pm72, data.timestamp)}
+                </div>
+            `;
             container.innerHTML = html;
             
             // อัปเดตเวลาล่าสุดใน update-time
-            if (latestTimestamp) {
-                const formattedTime = formatThaiDateTime(latestTimestamp);
+            if (data.timestamp) {
+                const formattedTime = formatThaiDateTime(data.timestamp);
                 updateTimeDisplay(formattedTime);
             }
+        } else {
+            container.innerHTML = '<div class="loading">ไม่มีข้อมูล PM2.5</div>';
         }
         
     } catch (error) {
         console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล:", error);
-        container.innerHTML = `
-            <div class="error">
-                <strong>❌ เกิดข้อผิดพลาด:</strong><br>
-                ${error.message}<br><br>
-                <small>กรุณาตรวจสอบ Firebase Configuration และสิทธิ์การเข้าถึง</small>
-            </div>
-        `;
+        
+        // ถ้า error เป็นเรื่อง index ให้แสดงข้อความแนะนำ
+        if (error.code === 'failed-precondition' || error.message.includes('index')) {
+            container.innerHTML = `
+                <div class="error">
+                    <strong>❌ ต้องสร้าง Index ใน Firestore:</strong><br>
+                    กรุณาไปที่ Firebase Console > Firestore Database > Indexes<br>
+                    และสร้าง composite index สำหรับ collection: pm25_cmucc<br>
+                    Field: timestamp (Descending)<br><br>
+                    หรือใช้คำสั่ง: <code>firebase firestore:indexes</code><br><br>
+                    <small>รายละเอียดเพิ่มเติม: ${error.message}</small>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <div class="error">
+                    <strong>❌ เกิดข้อผิดพลาด:</strong><br>
+                    ${error.message}<br><br>
+                    <small>กรุณาตรวจสอบ Firebase Configuration และสิทธิ์การเข้าถึง</small>
+                </div>
+            `;
+        }
     }
 }
 
