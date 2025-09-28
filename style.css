@@ -251,14 +251,14 @@
         }
         th{
             border: 1px solid #080808;
-            padding: 7px;
-            width: 4px;
+            padding: 5px;
+            width: 3px;
             text-align: center; 
             font-size: 0.9rem;
         }
         td {
             border: 1px solid #080808;
-            padding: 6px;
+            padding: 4px;
             text-align: left;
             font-size: 0.85rem;
         }
