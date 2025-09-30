@@ -416,7 +416,7 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.2rem;
             font-family: 'Prompt', sans-serif;
             transition: all 0.3s ease;
         }
@@ -477,13 +477,13 @@
             padding: 5px;
             width: 3px;
             text-align: center; 
-            font-size: 0.9rem;
+            font-size: 1.2rem;
         }
         td {
             border: 1px solid #080808;
             padding: 4px;
             text-align: left;
-            font-size: 0.85rem;
+            font-size: 1.2rem;
         }
 
         #content {
