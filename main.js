@@ -32,7 +32,7 @@ async function loadAndShowPopup() {
             updateTimeDisplay(formattedTime);
             
             // สร้างข้อความสำหรับ popup
-            const message = `${result.introducetext}`;
+            const message = `<div style="font-size: 1.5rem; ">${result.introducetext}</div>`;
             
             console.log("แสดง popup ค่า PM2.5 ล่าสุด:", pm25Value);
             showPopup(pm25Value, result.status, result.colorClass, message);
@@ -244,7 +244,7 @@ function showPopup(pm25Value, status, colorClass, message) {
     popupCircle.className = `circlepopup ${colorClass}`;
     popupCircle.innerHTML = `
         <div>PM 2.5</div>
-        <div style="font-size: 2em; font-weight: bold;">${pm25Value}</div>
+        <div style="font-size: 2rem; font-weight: bold;">${pm25Value}</div>
         <div>${status}</div>
     `;
 
