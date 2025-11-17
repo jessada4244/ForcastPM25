@@ -11,15 +11,6 @@
 
 <body>
      
-        <div class="cloud cloud1"></div>
-        <div class="cloud cloud2"></div>
-        <div class="cloud cloud3"></div>
-        <div class="cloud cloud4"></div>
-        <div class="cloud cloud5"></div>
-        <div class="small-cloud small-cloud1"></div>
-        <div class="small-cloud small-cloud2"></div>
-        <div class="small-cloud small-cloud3"></div>
-        <div class="small-cloud small-cloud4"></div>
         
     <!-- Modal Popup -->
     <div id="modalOverlay" class="modal-overlay">
@@ -53,6 +44,11 @@
             <div class="scale-box scale-blue">0 - 25<br>ดีมาก</div>
         </div>
         <p style="text-align:right; font-size: 14px; color: #838080;">ที่มา:กรมควบคุมโรค กระทรวงสาธารณสุข</p>
+     <button class="toggle-table-btn" onclick="toggleTable()">
+            <span id="btnText">ดูรายละเอียดเกณฑ์ AQI</span>
+        </button>
+
+        <div id="tableContainer" class="table-container">
         <table  >
             <tr style="background-color: rgb(180, 182, 182);">
                 <th>AQI</th>
@@ -92,6 +88,31 @@
                 <td>ทุกคนควรหลีกเลี่ยงกิจกรรมกลางแจ้ง หลีกเลี่ยงพื้นที่ที่มีมลพิษทางอากาศสูง หรือใช้อุปกรณ์ป้องกันตนเองหากมีความจำเป็น หากมีอาการทางสุขภาพควรปรึกษาแพทย์</td>
             </tr>
         </table>
+               </div>
+
+         <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <script>
+        function toggleTable() {
+            const tableContainer = document.getElementById('tableContainer');
+            const btnText = document.getElementById('btnText');
+            
+            tableContainer.classList.toggle('active');
+            
+            if (tableContainer.classList.contains('active')) {
+                btnText.textContent = 'ซ่อนรายละเอียดเกณฑ์ AQI';
+            } else {
+                btnText.textContent = 'ดูรายละเอียดเกณฑ์ AQI';
+            }
+        }
+
+        function closePopup() {
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+
+        // เชื่อมต่อ Firebase และโหลดข้อมูลของคุณที่นี่
+    </script>
     </div>
 </div>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
