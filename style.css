@@ -9,9 +9,6 @@
             min-height: 100vh;
         
         }
-
-       
-
        
         @keyframes float {
             0% {
@@ -31,14 +28,14 @@
         }
 
         .content h1 {
-            font-size: 3rem;
+            font-size: 5rem;
             margin-bottom: 1rem;
             opacity: 0;
             animation: fadeIn 2s ease-in-out 1s forwards;
         }
 
         .content p {
-            font-size: 1.2rem;
+            font-size: 1rem;
             opacity: 0;
             animation: fadeIn 2s ease-in-out 2s forwards;
         }
@@ -119,31 +116,12 @@
             box-shadow: 0 0 40px rgba(0,0,0,0.4);
         }
 
-        .red { 
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); 
-    color: #fff;
-    }
-
-        .orange { 
-    background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%); 
-    color: #2d3436;
-    }
-
-        .yellow { 
-    background: linear-gradient(135deg, #f9ca24 0%, #f0932b 100%); 
-    color: #2d3436;
-    }
-
-    .green { 
-    background: linear-gradient(135deg, #6ab04c 0%, #badc58 100%); 
-    color: #fff;
-    }
-
-        .blue { 
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
-    color: #fff;
-}
- 
+       .red { background: #e74c3c; }
+        .orange { background: #f39c12; }
+        .yellow { background: #f1c40f; }
+        .green { background: #2ecc71; }
+        .blue { background: #00cfff; }
+        
         .demo-button {
             background: #2ecc71;
             color: white;
@@ -292,10 +270,10 @@
             margin: 1.5rem 0;
         }
         .scale-box {
-             font-size: 1.7rem; /* ขนาดตัวอักษรเริ่มต้น */
-            height: 45px;
+             font-size: 1.3rem; /* ขนาดตัวอักษรเริ่มต้น */
+            height: 30px;
             width: 200px;
-            margin: 0.2px;
+            margin: 0.3px;
         }
     /*แท่งสี*/
         .scale-red { background: #e74c3c; }
@@ -378,7 +356,7 @@
 
         .pm25-title {
             font-size: 1rem;
-            color: #555;
+            color: #0d0d0d;
             margin-bottom: 20px;
             font-weight: 600;
         }
@@ -657,6 +635,7 @@
   box-shadow: 0 7px 20px rgba(0,0,0.2,0.5);
   cursor: pointer;
 }
+
 
         
         

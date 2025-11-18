@@ -293,36 +293,36 @@ function createPMCardHTML(docId, pmValue, pm24, pm48, pm72, timestamp) {
   <div class="air-today">
         <div>
          <h3>คุณภาพอากาศวันนี้ </h3>
-         <div>วันที่ <span id="current-time"></span></div>
+         <h2>วันที่ <span id="current-time"></span></h2>
         <div  class="circle-today" style="background-color: ${currentPM.backgroundColor} ;" onclick="showDetailPopup('${pmValue}', '${currentPM.status}')">
             <div>PM 2.5</div>
-            <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pmValue}</div>
+            <div class="pm-value" style="color: black; font-weight: bold; font-size: 80px;">${pmValue}</div>
             <div>${currentPM.status}</div>
         </div>
         </div>
         <!-- วงกลมชั่วโมง (เล็กกว่าหน่อย) -->
   <div class="air-hours">
         <div>
-         <p>24 ชั่วโมง</p>
+         <h2>24 ชั่วโมง</h2>
         <div class="circle" style="background-color: ${pm24Status.backgroundColor};" onclick="showDetailPopup('${pm24}', '${pm24Status.status}')">
             <div>PM 2.5</div>
-            <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pm24}</div>
+            <div class="pm-value" style="color: black; font-weight: bold; font-size: 3em;">${pm24}</div>
             <div>${pm24Status.status}</div>
         </div>
          </div>
         <div>
-         <p>48 ชั่วโมง</p>
+         <h2>48 ชั่วโมง</h2>
         <div class="circle" style="background-color: ${pm48Status.backgroundColor};" onclick="showDetailPopup('${pm48}', '${pm48Status.status}')">
             <div>PM 2.5</div>
-            <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pm48}</div>
+            <div class="pm-value" style="color: black; font-weight: bold; font-size: 3em;">${pm48}</div>
             <div>${pm48Status.status}</div>
         </div>
          </div>
         <div>
-         <p>72 ชั่วโมง</p>
+         <h2>72 ชั่วโมง</h2>
         <div class="circle" style="background-color: ${pm72Status.backgroundColor};" onclick="showDetailPopup('${pm72}', '${pm72Status.status}')">
             <div>PM 2.5</div>
-            <div class="pm-value" style="color: black; font-weight: bold; font-size: 2em;">${pm72}</div>
+            <div class="pm-value" style="color: black; font-weight: bold; font-size: 3em;">${pm72}</div>
             <div>${pm72Status.status}</div>
         </div>
         </div>
