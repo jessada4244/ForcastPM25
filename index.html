@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container"> 
         <h1>พยากรณ์ค่าฝุ่นละอองในอากาศ</h1>
         <h2> ตำบลระแหง อำเภอเมือง จังหวัดตาก</h2>  
               
@@ -34,13 +34,29 @@
  
    
         <h3 style="text-align:center; color: #000000;">เกณฑ์ดัชนีคุณภาพอากาศประเทศไทย (AQI)</h4>
-        <div class="aqi-scale">
-            <div class="scale-box scale-red">> 200 <br>แย่มาก</div>
-            <div class="scale-box scale-orange">101 - 200<br>เริ่มแย่</div>
-            <div class="scale-box scale-yellow">51 - 100<br>ปานกลาง</div>
-            <div class="scale-box scale-green">26 - 50<br>ดี</div>
-            <div class="scale-box scale-blue">0 - 25<br>ดีมาก</div>
-        </div>
+        <div class="aqi-section">
+            <div class="aqi-scale">
+                <div class="aqi-bar aqi-bar-1">
+                    <span>0-25</span>
+                    <span style="font-size: 0.7rem;">ดีมาก</span>
+                </div>
+                <div class="aqi-bar aqi-bar-2">
+                    <span>26-50</span>
+                    <span style="font-size: 0.7rem;">ดี</span>
+                </div>
+                <div class="aqi-bar aqi-bar-3">
+                    <span>51-100</span>
+                    <span style="font-size: 0.7rem;">ปานกลาง</span>
+                </div>
+                <div class="aqi-bar aqi-bar-4">
+                    <span>101-200</span>
+                    <span style="font-size: 0.7rem;">ไม่ดี</span>
+                </div>
+                <div class="aqi-bar aqi-bar-5">
+                    <span>&gt;200</span>
+                    <span style="font-size: 0.7rem;">แย่มาก</span>
+                </div>
+            </div>
             <br>
         <p style="text-align:right; font-size: 20px; color: #838080;">ที่มา:กรมควบคุมโรค กระทรวงสาธารณสุข</p>
      <button class="toggle-table-btn" onclick="toggleTable()">

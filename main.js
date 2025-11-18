@@ -292,7 +292,7 @@ function createPMCardHTML(docId, pmValue, pm24, pm48, pm72, timestamp) {
   <!-- วงกลมวันนี้ (ใหญ่) -->
   <div class="air-today">
         <div>
-         <h3>คุณภาพอากาศวันนี้ </h3>
+         <h2>คุณภาพอากาศวันนี้ </h2>
          <h2>วันที่ <span id="current-time"></span></h2>
         <div  class="circle-today" style="background-color: ${currentPM.backgroundColor} ;" onclick="showDetailPopup('${pmValue}', '${currentPM.status}')">
             <div>PM 2.5</div>
